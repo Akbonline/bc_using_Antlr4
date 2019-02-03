@@ -2,7 +2,6 @@ grammar bc;
 
 expr 
     :expr1 OP expr1 
-    |expr<EOF>
     ;
 
 expr1 
