@@ -1,4 +1,4 @@
-grammar calc;
+grammar bc;
 
 expr 
     :expr1 OP expr1 
