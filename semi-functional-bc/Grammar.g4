@@ -1,39 +1,39 @@
 grammar Grammar;
 
-expr: expr op=('*'|'/') expr # MulDiv
-    | expr op=('+'|'-') expr # AddSub
-    | expr op='%' expr #modolo
-    | expr op='^' expr #power
-    | expr'++' #PostIncrement
-    | expr'--' #PostDecrement
-    | '++'expr #PreIncrement
-    | '--'expr #PreDecrement
-    | '-'expr #Negation
-    | VAR op='=' expr #setVariable
+prog: stat+ ;
+
+stat: expr NEWLINE #printExpr
+    | ID '=' expr NEWLINE #assign
+    | NEWLINE #blank
+    ;
+
+expr: VAR op='=' expr #setVariable
+    | expr op=('||'|'&&') expr #andOr
+    | '!'expr #not
     | expr '>' expr #greaterThan
     | expr '>=' expr #greaterThanOrEqual
     | expr '<' expr #lessThan
     | expr '<=' expr #lessThanOrEqual
-    | '!'expr #not
-    | expr op=('&&'|'||') expr #andOr
+    | expr '==' expr #isEqualTo
+    | expr op=('+'|'-') expr # AddSub
+    | expr op=('*'|'/'|'%') expr # MulDivMod
+    | expr op='^' expr #power
+    | SUB expr #Negation
+    | expr'++' #PostIncrement
+    | expr'--' #PostDecrement
+    | '++'expr #PreIncrement
+    | '--'expr #PreDecrement
     | 'sqrt''('expr')' #sqrt
     | 's''('expr')' #sine
     | 'c''('expr')' #cosine
     | 'l''('expr')' #natLog
     | 'e''('expr')' #eToTheX
     | INT           # Int
+    | ID #id
     | '('expr')'    # Parens
-    | PRINT         # PRINT
     ;
 
-PRINT : 'print'' ''"'SOMETHING'"'';'
-    |'print'' 'VAR';'
-    ;
-
-SOMETHING: [_A-Za-z0-9\t\n\r]+
-    |ANY_CHAR*
-    ;
-ANY_CHAR: . ;
+ID: [_a-zA-Z]+ ;
 VAR: [_A-Za-z]+ ;
 INT: [0-9]+ ;
 MUL: '*' ;
@@ -50,4 +50,5 @@ LE: '<=' ;
 INCR: '++';
 DECR: '--';
 COMMENT: '/*' .*? '*/' -> skip ;
-WS : [ \t\r\n]+ -> skip ;
+NEWLINE:'\r'? '\n' ;
+WS : [ \t]+ -> skip ;
