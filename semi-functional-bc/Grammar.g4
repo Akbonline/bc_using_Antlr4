@@ -21,11 +21,19 @@ expr: expr op=('*'|'/') expr # MulDiv
     | 'c''('expr')' #cosine
     | 'l''('expr')' #natLog
     | 'e''('expr')' #eToTheX
-    | INT                    # Int
-    | '('expr')'             # Parens
+    | INT           # Int
+    | '('expr')'    # Parens
+    | PRINT         # PRINT
     ;
 
+PRINT : 'print'' ''"'SOMETHING'"'';'
+    |'print'' 'VAR';'
+    ;
 
+SOMETHING: [_A-Za-z0-9\t\n\r]+
+    |ANY_CHAR*
+    ;
+ANY_CHAR: . ;
 VAR: [_A-Za-z]+ ;
 INT: [0-9]+ ;
 MUL: '*' ;
