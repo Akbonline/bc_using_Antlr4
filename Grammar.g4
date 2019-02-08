@@ -33,8 +33,8 @@ expr: SUB expr #Negation
     | '('expr')'    # Parens
     ;
 
-ID: [_a-zA-Z]+ ;
-VAR: [_A-Za-z]+ ;
+ID:  [_a-zA-Z]+ ;
+STRING: '"' .*? '"' ;
 INT: [0-9]+ ;
 MUL: '*' ;
 DIV: '/' ;
@@ -52,3 +52,4 @@ DECR: '--';
 COMMENT: '/*' .*? '*/' -> skip ;
 NEWLINE:'\r'? '\n' ;
 WS : [ \t]+ -> skip ;
+SPACE: ' ' -> skip ;
