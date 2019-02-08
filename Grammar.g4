@@ -16,6 +16,7 @@ expr: SUB expr #Negation
     | expr '<' expr #lessThan
     | expr '<=' expr #lessThanOrEqual
     | expr '==' expr #isEqualTo
+    | expr '!=' expr #notEqualTo
     | expr op=('+'|'-') expr # AddSub
     | expr op=('*'|'/'|'%') expr # MulDivMod
     | expr op='^' expr #power
