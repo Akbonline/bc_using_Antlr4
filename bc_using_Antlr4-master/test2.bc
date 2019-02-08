@@ -1,0 +1,21 @@
+a=5
+++a
+--a
+a--
+a++
+a>=0
+a<=0
+a=-7
+a
+-a
+b = (a==7)
+b==1 || (a>=7)
+b==1 && (a==7)
+a=read()
+25
+sqrt(a)
+/* Negative Test Cases */
+@#$
+sdfsdf
+a===6
+6=a
