@@ -7,7 +7,8 @@ stat: expr NEWLINE #printExpr
     | NEWLINE #blank
     ;
 
-expr: VAR op='=' expr #setVariable
+expr: SUB expr #Negation
+    | VAR op='=' expr #setVariable
     | expr op=('||'|'&&') expr #andOr
     | '!'expr #not
     | expr '>' expr #greaterThan
@@ -18,7 +19,6 @@ expr: VAR op='=' expr #setVariable
     | expr op=('+'|'-') expr # AddSub
     | expr op=('*'|'/'|'%') expr # MulDivMod
     | expr op='^' expr #power
-    | SUB expr #Negation
     | expr'++' #PostIncrement
     | expr'--' #PostDecrement
     | '++'expr #PreIncrement
