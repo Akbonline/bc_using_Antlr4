@@ -9,46 +9,49 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainVisitor {
-    private static class Visitor extends GrammarBaseVisitor<Integer> {
+    private static class Visitor extends GrammarBaseVisitor<Double> {
 //begin not mine
-        Map<String, Integer> memory = new HashMap<String, Integer>();
+        Map<String, Double> memory = new HashMap<String, Double>();
 
         @Override
-        public Integer visitAssign(GrammarParser.AssignContext ctx)
+        public Double visitAssign(GrammarParser.AssignContext ctx)
         {
             String id = ctx.ID().getText();  // id is left-hand side of '='
-            int value = visit(ctx.expr());   // compute value of expression on right
+            Double value = visit(ctx.expr());   // compute value of expression on right
             memory.put(id, value);           // store it in our memory
             return value;
         }
 
         /** expr NEWLINE */
         @Override
-        public Integer visitPrintExpr(GrammarParser.PrintExprContext ctx)
+        public Double visitPrintExpr(GrammarParser.PrintExprContext ctx)
         {
-            Integer value = visit(ctx.expr()); // evaluate the expr child
-            System.out.println(value);         // print the result
-            return 0;                          // return dummy value
+            Double value = visit(ctx.expr()); // evaluate the expr child
+            if(Math.floor(value) == value)
+                System.out.println(String.format("%.0f", value));         // print the result
+            else
+                System.out.println(value);
+            return (double)0;                          // return dummy value
         }
         /** ID */
         @Override
-        public Integer visitId(GrammarParser.IdContext ctx)
+        public Double visitId(GrammarParser.IdContext ctx)
         {
             String id = ctx.ID().getText();
             if ( memory.containsKey(id) ) return memory.get(id);
-            return 0;
+            return (double)0;
         }
 //End not mine
 
         @Override
-        public Integer visitParens(GrammarParser.ParensContext ctx) {
+        public Double visitParens(GrammarParser.ParensContext ctx) {
             return visit(ctx.expr());
         }
 
         @Override
-        public Integer visitMulDivMod(GrammarParser.MulDivModContext ctx) {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+        public Double visitMulDivMod(GrammarParser.MulDivModContext ctx) {
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if (ctx.op.getType() == GrammarParser.MUL)
             {
                 return left * right;
@@ -61,13 +64,13 @@ public class MainVisitor {
             {
                 return left % right;
             }
-            else return 0;
+            else return (double)0;
         }
 
         @Override
-        public Integer visitAddSub(GrammarParser.AddSubContext ctx) {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+        public Double visitAddSub(GrammarParser.AddSubContext ctx) {
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if (ctx.op.getType() == GrammarParser.ADD) {
                 return left + right;
             } else {
@@ -76,10 +79,10 @@ public class MainVisitor {
         }
 
       /*  @Override
-        public Integer visitModolo(GrammarParser.ModoloContext ctx)
+        public Double visitModolo(GrammarParser.ModoloContext ctx)
         {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if (ctx.op.getType() == GrammarParser.MOD)
             {
                 return left % right;
@@ -89,167 +92,167 @@ public class MainVisitor {
         }*/
 
         @Override
-        public Integer visitPower(GrammarParser.PowerContext ctx)
+        public Double visitPower(GrammarParser.PowerContext ctx)
         {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if (ctx.op.getType() == GrammarParser.POW)
             {
-                return (int)Math.pow(left, right);
+                return (Double)Math.pow(left, right);
             }
             else
                 return visitChildren(ctx);
         }
 
         @Override
-        public Integer visitPreIncrement(GrammarParser.PreIncrementContext ctx)
+        public Double visitPreIncrement(GrammarParser.PreIncrementContext ctx)
         {
-            int left = visit(ctx.expr());
+            Double left = visit(ctx.expr());
             ++left;
             return left;
         }
 
         @Override
-        public Integer visitPreDecrement(GrammarParser.PreDecrementContext ctx)
+        public Double visitPreDecrement(GrammarParser.PreDecrementContext ctx)
         {
-            int left = visit(ctx.expr());
+            Double left = visit(ctx.expr());
             --left;
             return left;
         }
 
         @Override
-        public Integer visitPostIncrement(GrammarParser.PostIncrementContext ctx)
+        public Double visitPostIncrement(GrammarParser.PostIncrementContext ctx)
         {
-            int left = visit(ctx.expr());
+            Double left = visit(ctx.expr());
             left++;
             return left;
         }
 
         @Override
-        public Integer visitPostDecrement(GrammarParser.PostDecrementContext ctx)
+        public Double visitPostDecrement(GrammarParser.PostDecrementContext ctx)
         {
-            int left = visit(ctx.expr());
+            Double left = visit(ctx.expr());
             left--;
             return left;
         }
 
         @Override
-        public Integer visitNegation(GrammarParser.NegationContext ctx) //Needs work
+        public Double visitNegation(GrammarParser.NegationContext ctx) //Needs work
         {
             return -1*visit(ctx.expr()); //Doesn't work correctly'
         }
 
         @Override
-        public Integer visitNot(GrammarParser.NotContext ctx) //Needs work
+        public Double visitNot(GrammarParser.NotContext ctx) //Needs work
         {
-            int expression = visit(ctx.expr());
+            Double expression = visit(ctx.expr());
             if(expression == 0)
-              return 1; //Placeholder value, edit later
+              return (double)1; //Placeholder value, edit later
             else
-              return 0;
+              return (double)0;
         }
 
         @Override
-        public Integer visitSqrt(GrammarParser.SqrtContext ctx)
+        public Double visitSqrt(GrammarParser.SqrtContext ctx)
         {
-            int left = visit(ctx.expr());
-            return (int)Math.sqrt(left);
+            Double left = visit(ctx.expr());
+            return (Double)Math.sqrt(left);
         }
 
         @Override
-        public Integer visitGreaterThan(GrammarParser.GreaterThanContext ctx)
+        public Double visitGreaterThan(GrammarParser.GreaterThanContext ctx)
         {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if(left > right)
             {
-                return 1;
+                return (double)1;
             }
             else
-                return 0;
+                return (double)0;
         }
 
         @Override
-        public Integer visitGreaterThanOrEqual(GrammarParser.GreaterThanOrEqualContext ctx)
+        public Double visitGreaterThanOrEqual(GrammarParser.GreaterThanOrEqualContext ctx)
         {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if(left >= right)
             {
-                return 1;
+                return (double)1;
             }
             else
-                return 0;
+                return (double)0;
         }
 
         @Override
-        public Integer visitLessThan(GrammarParser.LessThanContext ctx)
+        public Double visitLessThan(GrammarParser.LessThanContext ctx)
         {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if(left < right)
             {
-                return 1;
+                return (double)1;
             }
             else
-                return 0;
+                return (double)0;
         }
 
         @Override
-        public Integer visitLessThanOrEqual(GrammarParser.LessThanOrEqualContext ctx)
+        public Double visitLessThanOrEqual(GrammarParser.LessThanOrEqualContext ctx)
         {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if(left <= right)
             {
-                return 1;
+                return (double)1;
             }
             else
-                return 0;
+                return (double)0;
         }
 
         @Override
-        public Integer visitIsEqualTo(GrammarParser.IsEqualToContext ctx)
+        public Double visitIsEqualTo(GrammarParser.IsEqualToContext ctx)
         {
-            int left = visit(ctx.expr(0));
-            int right = visit(ctx.expr(1));
+            Double left = visit(ctx.expr(0));
+            Double right = visit(ctx.expr(1));
             if(left == right)
             {
-                return 1;
+                return (double)1;
             }
             else
-                return 0;
+                return (double)0;
         }
 
 
         @Override
-        public Integer visitSine(GrammarParser.SineContext ctx)
+        public Double visitSine(GrammarParser.SineContext ctx)
         {
-            int left = visit(ctx.expr());
-            return (int)Math.sin(left);
+            Double left = visit(ctx.expr());
+            return (Double)Math.sin(left);
         }
         @Override
-        public Integer visitCosine(GrammarParser.CosineContext ctx)
+        public Double visitCosine(GrammarParser.CosineContext ctx)
         {
-            int left = visit(ctx.expr());
-            return (int)Math.cos(left);
+            Double left = visit(ctx.expr());
+            return (Double)Math.cos(left);
         }
         @Override
-        public Integer visitEToTheX(GrammarParser.EToTheXContext ctx)
+        public Double visitEToTheX(GrammarParser.EToTheXContext ctx)
         {
-            int left = visit(ctx.expr());
-            return (int)Math.exp(left);
+            Double left = visit(ctx.expr());
+            return (Double)Math.exp(left);
         }
         @Override
-        public Integer visitNatLog(GrammarParser.NatLogContext ctx)
+        public Double visitNatLog(GrammarParser.NatLogContext ctx)
         {
-            int left = visit(ctx.expr());
-            return (int)Math.log(left);
+            Double left = visit(ctx.expr());
+            return (Double)Math.log(left);
         }
 
         @Override
-        public Integer visitInt(GrammarParser.IntContext ctx) {
-            return Integer.valueOf(ctx.INT().getText());
+        public Double visitInt(GrammarParser.IntContext ctx) {
+            return Double.valueOf(ctx.INT().getText());
         }
     }
 
