@@ -24,6 +24,7 @@ public class MainVisitor {
             String id = ctx.ID().getText();
             Double value = visit(ctx.expr());
             memory.put(id, value);
+
             if(inputs.size()>0)
             {
                 System.out.println("Input: " + inputs.remove()); //Display input
@@ -35,6 +36,7 @@ public class MainVisitor {
         public Double visitPrintExpr(GrammarParser.PrintExprContext ctx)
         {
             Double value = visit(ctx.expr()); // evaluate the expr child
+
             if(inputs.size() > 0)
                 System.out.println("Input: " + inputs.remove()); //Display input
             if(Math.floor(value) == value) //Check if output is a whole number
@@ -272,6 +274,12 @@ public class MainVisitor {
         String[] splitInput = expressions.split("\\r?\\n"); //Split string into array at new lines
         for(int i=0; i<splitInput.length; i++)
         {
+          if(splitInput[i].indexOf("read()") != -1)
+          {
+            inputs.add(splitInput[i] + "\nInput: " + splitInput[i+1]); //Consider Read and its value as one input for displaying
+            i++;
+            continue;
+          }
           inputs.add(splitInput[i]); //Add inputs to queue for printing in order
         }
 

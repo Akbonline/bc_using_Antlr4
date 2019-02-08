@@ -4,11 +4,11 @@ prog: stat+ ;
 
 stat: expr NEWLINE #printExpr
     | ID '=' expr NEWLINE #assign
+    | ID '=' 'read()' NEWLINE expr #assign
     | NEWLINE #blank
     ;
 
 expr: SUB expr #Negation
-    | VAR op='=' expr #setVariable
     | expr op=('||'|'&&') expr #andOr
     | '!'expr #not
     | expr '>' expr #greaterThan
