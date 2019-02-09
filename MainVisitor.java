@@ -7,12 +7,16 @@ import java.io.InputStream;
 import java.lang.Math;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.Vector;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class MainVisitor {
     private static class Visitor extends GrammarBaseVisitor<Double> {
 
         Map<String, Double> memory = new HashMap<String, Double>(); //Store variables
-        int outputCount = 0;
+        Boolean format = false;
 
         @Override
         public Double visitAssign(GrammarParser.AssignContext ctx)
@@ -22,23 +26,19 @@ public class MainVisitor {
             memory.put(id, value);
 
             return value;
-
         }
 
         @Override
         public Double visitPrintExpr(GrammarParser.PrintExprContext ctx)
         {
-            Double value = visit(ctx.expr()); // evaluate the expr child
+            Double value = visit(ctx.expr()); // evaluate the expr chil
 
-            if(Math.floor(value) == value) //Check if output is a whole number
-            {
-                System.out.println("Output " + outputCount + ": " + String.format("%.0f", value)); // print the result formatted
-                outputCount++;
-            }
+            if(Math.floor(value) == value && !format) //Check if output is a whole number
+                System.out.println("Output: " + String.format("%.0f", value)); // print the result formatted
             else
             {
-                System.out.println("Output " + outputCount + ": " + value); //print the result
-                outputCount++;
+                format=false;
+                System.out.println("Output: " + String.format("%.13f", value)); //print the result
             }
             return (double)0; // return dummy value
         }
@@ -66,6 +66,7 @@ public class MainVisitor {
             }
             else if (ctx.op.getType() == GrammarParser.DIV)
             {
+                format=true;
                 return left / right;
             }
             else if (ctx.op.getType() == GrammarParser.MOD)
@@ -150,6 +151,7 @@ public class MainVisitor {
         @Override
         public Double visitSqrt(GrammarParser.SqrtContext ctx)
         {
+            format = true;
             Double left = visit(ctx.expr());
             return (Double)Math.sqrt(left);
         }
@@ -172,7 +174,7 @@ public class MainVisitor {
         {
             Double left = visit(ctx.expr(0));
             Double right = visit(ctx.expr(1));
-            if(left >= right)
+            if(left > right || left.compareTo(right)==0)
             {
                 return (double)1;
             }
@@ -198,7 +200,7 @@ public class MainVisitor {
         {
             Double left = visit(ctx.expr(0));
             Double right = visit(ctx.expr(1));
-            if(left <= right)
+            if(left < right || left.compareTo(right)==0)
             {
                 return (double)1;
             }
@@ -211,7 +213,7 @@ public class MainVisitor {
         {
             Double left = visit(ctx.expr(0));
             Double right = visit(ctx.expr(1));
-            if(left == right)
+            if(left.compareTo(right)==0)
             {
                 return (double)1;
             }
@@ -224,7 +226,7 @@ public class MainVisitor {
         {
             Double left = visit(ctx.expr(0));
             Double right = visit(ctx.expr(1));
-            if(left != right)
+            if(left.compareTo(right)!=0)
             {
                 return (double)1;
             }
@@ -232,27 +234,32 @@ public class MainVisitor {
                 return (double)0;
         }
 
+
         @Override
         public Double visitSine(GrammarParser.SineContext ctx)
         {
+            format=true;
             Double left = visit(ctx.expr());
             return (Double)Math.sin(left);
         }
         @Override
         public Double visitCosine(GrammarParser.CosineContext ctx)
         {
+            format=true;
             Double left = visit(ctx.expr());
             return (Double)Math.cos(left);
         }
         @Override
         public Double visitEToTheX(GrammarParser.EToTheXContext ctx)
         {
+            format=true;
             Double left = visit(ctx.expr());
             return (Double)Math.exp(left);
         }
         @Override
         public Double visitNatLog(GrammarParser.NatLogContext ctx)
         {
+            format=true;
             Double left = visit(ctx.expr());
             return (Double)Math.log(left);
         }
@@ -261,6 +268,11 @@ public class MainVisitor {
         public Double visitInt(GrammarParser.IntContext ctx) {
             return Double.valueOf(ctx.INT().getText());
         }
+    }
+    static String convertStreamToString(java.io.InputStream is)
+    {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     public static void main(String[] args) throws Exception {
@@ -285,6 +297,6 @@ public class MainVisitor {
         //Print tree like -tree grun option
         String strTree = "";
         strTree = tree.toStringTree(parser);
-        System.out.println("\n\nTree: \n" + strTree); //Uncomment this to print the tree
+        //System.out.println("\n\nTree: \n" + strTree); //Uncomment this to print the tree
     }
 }

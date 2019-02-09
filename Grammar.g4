@@ -17,8 +17,8 @@ expr: SUB expr #Negation
     | expr '<=' expr #lessThanOrEqual
     | expr '==' expr #isEqualTo
     | expr '!=' expr #notEqualTo
-    | expr op=('+'|'-') expr # AddSub
     | expr op=('*'|'/'|'%') expr # MulDivMod
+    | expr op=('+'|'-') expr # AddSub
     | expr op='^' expr #power
     | expr'++' #PostIncrement
     | expr'--' #PostDecrement
@@ -34,8 +34,8 @@ expr: SUB expr #Negation
     | '('expr')'    # Parens
     ;
 
-ID:  [_a-zA-Z]+ ;
-STRING: '"' .*? '"' ;
+ID: [_a-zA-Z]+ ;
+VAR: [_A-Za-z]+ ;
 INT: [0-9]+ ;
 MUL: '*' ;
 DIV: '/' ;
@@ -53,4 +53,3 @@ DECR: '--';
 COMMENT: '/*' .*? '*/' -> skip ;
 NEWLINE:'\r'? '\n' ;
 WS : [ \t]+ -> skip ;
-SPACE: ' ' -> skip ;
